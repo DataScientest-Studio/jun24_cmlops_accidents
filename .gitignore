@@ -56,9 +56,6 @@ docs/_build/
 # PyBuilder
 target/
 
-# DotEnv configuration
-.env
-
 # Database
 *.db
 *.rdb
@@ -87,3 +84,11 @@ target/
 
 # Mypy cache
 .mypy_cache/
+
+# Environments
+.env
+.venv
+
+# Data folder
+data/raw/*
+data/processed/*
