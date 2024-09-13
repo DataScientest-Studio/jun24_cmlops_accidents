@@ -9,6 +9,7 @@ logging.basicConfig(filename='app.log', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 model = joblib.load('models/KNN_250.joblib')
+encoder = joblib.load('models/encoder.joblib')
 app = FastAPI()
 
 class AccidentData(BaseModel):
@@ -47,19 +48,25 @@ def home():
 
 @app.post("/predict")
 def predict(data: AccidentData):
-    # Extraire les données sous forme de liste avec les 16 variables
-    input_data = np.array([[
-        data.catu, data.catv, data.obsm, data.col, data.place,
-        data.manv, data.situ, data.agg, data.plan, data.secu_combined,
-        data.age_category_encoded, data.infra, data.inter, data.sexe,
-        data.catr, data.lum
-    ]])
+    try:
+        # Extraire les données sous forme de liste avec les 16 variables
+        input_data = np.array([[
+            data.catu, data.catv, data.obsm, data.col, data.place,
+            data.manv, data.situ, data.agg, data.plan, data.secu_combined,
+            data.age_category_encoded, data.infra, data.inter, data.sexe,
+            data.catr, data.lum
+        ]])
+
+        # Encoder les données
+        input_data_encoded = encoder.transform(input_data).toarray()
+
+        # Faire une prédiction avec le modèle
+        prediction = model.predict(input_data_encoded)
     
-    # Faire une prédiction avec le modèle
-    prediction = model.predict(input_data)
-    
-    # Retourner la prédiction sous forme de JSON
-    return {"prediction": int(prediction[0])}
+        # Retourner la prédiction sous forme d'entier
+        return {"prediction": int(prediction[0])}
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.get("/model_performance")
 def get_model_performance():
