@@ -7,15 +7,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from auth import router as auth_router, authenticate
 from log_module import router as log_router
 
-import secrets
 from pydantic import BaseModel
-
-# conf des logs
-logging.basicConfig(
-    filename="../../logs/app.log",
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-)
 
 # Tentative de chargement des modèles (gestion des erreurs si les fichiers manquent)
 try:
