@@ -5,6 +5,8 @@ import numpy as np
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from auth import router as auth_router, authenticate
+from log_module import router as log_router
+
 import secrets
 from pydantic import BaseModel
 
@@ -118,3 +120,4 @@ def get_model_performance(credentials: HTTPBasicCredentials = Depends(security))
 
 # Inclusion des routes
 app.include_router(auth_router, prefix="/auth")
+app.include_router(log_router, prefix="/logs")
