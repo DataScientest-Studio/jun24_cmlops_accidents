@@ -13,7 +13,7 @@ class LoginData(BaseModel):
     password: str
 
 def load_user_credentials():
-    with open("../../data/raw/login_data.json", "r") as f:  
+    with open("data/raw/login_data.json", "r") as f:  
         return json.load(f)
 
 def authenticate(credentials: HTTPBasicCredentials):

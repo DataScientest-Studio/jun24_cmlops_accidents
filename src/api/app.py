@@ -2,17 +2,19 @@ import json
 import logging
 import joblib
 import numpy as np
+import pandas as pd
+
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from auth import router as auth_router, authenticate
-from log_module import router as log_router
+from src.api.auth import router as auth_router, authenticate
+from src.api.log_module import router as log_router
 
 from pydantic import BaseModel
 
 # Tentative de chargement des modèles (gestion des erreurs si les fichiers manquent)
 try:
-    model = joblib.load("../../models/KNN_250.joblib")
-    encoder = joblib.load("../../models/encoder.joblib")
+    model = joblib.load("models/KNN_250.joblib")
+    encoder = joblib.load("models/encoder.joblib")
     logging.info("Model and encoder loaded successfully.")
 except Exception as e:
     model = None
@@ -68,7 +70,7 @@ def predict(data: AccidentData, credentials: HTTPBasicCredentials = Depends(secu
         raise HTTPException(status_code=500, detail="Model or encoder not loaded.")
 
     try:
-        input_data = np.array(
+        input_data = pd.DataFrame(
             [
                 [
                     data.catu,
@@ -88,12 +90,23 @@ def predict(data: AccidentData, credentials: HTTPBasicCredentials = Depends(secu
                     data.catr,
                     data.lum,
                 ]
+            ], columns=[
+                'catu', 'catv', 'obsm', 'col', 'place', 'manv', 'situ', 'agg', 
+            'plan', 'secu_combined', 'age_category_encoded', 'infra', 'inter', 
+            'sexe', 'catr', 'lum'
             ]
         )
 
-        input_data_encoded = encoder.transform(input_data).toarray()
+        logging.info(f"Received input data: {input_data}")
+        logging.info(f"Data types of the input data: {input_data.dtypes}")
+        logging.info(f"Input data shape before encoding: {input_data.shape}")
+
+        input_data = input_data.astype('object')
+        input_data_encoded = encoder.transform(input_data)
+        logging.info(f"Encoded input data: {input_data_encoded}")
 
         prediction = model.predict(input_data_encoded)
+        logging.info(f"Prediction result: {prediction}")
 
         return {"prediction": int(prediction[0])}
 
