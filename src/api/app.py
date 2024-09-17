@@ -1,16 +1,33 @@
-from fastapi import FastAPI, HTTPException, status
-from pydantic import BaseModel
+import json
+import logging
 import joblib
 import numpy as np
-import logging
-import json
+from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from auth import router as auth_router, authenticate
+import secrets
+from pydantic import BaseModel
 
-logging.basicConfig(filename='app.log', level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+# conf des logs
+logging.basicConfig(
+    filename="../../logs/app.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
-model = joblib.load('models/KNN_250.joblib')
-encoder = joblib.load('models/encoder.joblib')
+# Tentative de chargement des modèles (gestion des erreurs si les fichiers manquent)
+try:
+    model = joblib.load("../../models/KNN_250.joblib")
+    encoder = joblib.load("../../models/encoder.joblib")
+    logging.info("Model and encoder loaded successfully.")
+except Exception as e:
+    model = None
+    encoder = None
+    logging.error(f"Error loading model or encoder: {e}")
+
 app = FastAPI()
+
+security = HTTPBasic()
 
 class AccidentData(BaseModel):
     catu: int
@@ -30,70 +47,74 @@ class AccidentData(BaseModel):
     catr: int
     lum: int
 
-class LoginData(BaseModel):
-    username: str
-    password: str
 
 def load_model_performance():
-    with open('models/KNN250_performance.json', 'r') as f:
-        return json.load(f)
-    
-def load_user_credentials():
-    with open('data/users.json', 'r') as f:
-        return json.load(f)
+    try:
+        with open("models/KNN250_performance.json", "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        logging.error("Performance file not found.")
+        raise HTTPException(status_code=500, detail="Performance data not available.")
 
+# Route d'accueil
 @app.get("/")
 def home():
-    return {"message": "Bienvenue sur l'API du modèle de Machine Learning de prédiction de la gravité des accidents de la route"}
+    return {
+        "message": "Bienvenue sur l'API du modèle de prédiction de la gravité des accidents de la route"
+    }
+
 
 @app.post("/predict")
-def predict(data: AccidentData):
-    try:
-        # Extraire les données sous forme de liste avec les 16 variables
-        input_data = np.array([[
-            data.catu, data.catv, data.obsm, data.col, data.place,
-            data.manv, data.situ, data.agg, data.plan, data.secu_combined,
-            data.age_category_encoded, data.infra, data.inter, data.sexe,
-            data.catr, data.lum
-        ]])
+def predict(data: AccidentData, credentials: HTTPBasicCredentials = Depends(security)):
+    # Authentification
+    authenticate(credentials)
 
-        # Encoder les données
+    if model is None or encoder is None:
+        logging.error("Model or encoder not loaded.")
+        raise HTTPException(status_code=500, detail="Model or encoder not loaded.")
+
+    try:
+        input_data = np.array(
+            [
+                [
+                    data.catu,
+                    data.catv,
+                    data.obsm,
+                    data.col,
+                    data.place,
+                    data.manv,
+                    data.situ,
+                    data.agg,
+                    data.plan,
+                    data.secu_combined,
+                    data.age_category_encoded,
+                    data.infra,
+                    data.inter,
+                    data.sexe,
+                    data.catr,
+                    data.lum,
+                ]
+            ]
+        )
+
         input_data_encoded = encoder.transform(input_data).toarray()
 
-        # Faire une prédiction avec le modèle
         prediction = model.predict(input_data_encoded)
-    
-        # Retourner la prédiction sous forme d'entier
+
         return {"prediction": int(prediction[0])}
+
     except Exception as e:
-        return {"error": str(e)}
+        logging.error(f"Error during prediction: {e}")
+        raise HTTPException(status_code=500, detail="Prediction failed.")
+
 
 @app.get("/model_performance")
-def get_model_performance():
+def get_model_performance(credentials: HTTPBasicCredentials = Depends(security)):
+    authenticate(credentials)
+
     model_performance_data = load_model_performance()
     return model_performance_data
 
-# A voir lorsque "predict" fonctionnera
 
-# @app.post("/login")
-# def login(data: LoginData):
-#     logging.info("Login request received for user: %s", data.username)
-#     credentials = load_user_credentials()
-    
-#     if data.username in credentials and credentials[data.username] == data.password:
-#         logging.info("User %s authenticated successfully", data.username)
-#         return {"message": "Login successful"}
-#     else:
-#         logging.warning("Failed login attempt for user: %s", data.username)
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-    
-# @app.get("/logs")
-# def get_logs():
-#     logging.info("Logs endpoint accessed")
-#     try:
-#         with open('app.log', 'r') as f:
-#             logs = f.read()
-#         return {"logs": logs}
-#     except Exception as e:
-#         logging.error("Failed to read logs: %s", str(e))
-#         return {"error": "Failed to read logs"}
+# Inclusion des routes
+app.include_router(auth_router, prefix="/auth")
