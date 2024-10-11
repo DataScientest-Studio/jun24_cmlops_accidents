@@ -6,14 +6,13 @@ from src.api.auth import authenticate
 
 
 security = HTTPBasic()
-
 router = APIRouter()
 
 def configure_logging():
     log_handler = RotatingFileHandler(
         "logs/app.log",
-        maxBytes=1 * 1024 * 1024,
-        backupCount=3,
+        maxBytes=1 * 1024 * 1024, # 1 mo max par fichier log
+        backupCount=3, # rotation de logs sur 3 sauvegardes 
     )
     log_handler.setLevel(logging.INFO)
     log_handler.setFormatter(

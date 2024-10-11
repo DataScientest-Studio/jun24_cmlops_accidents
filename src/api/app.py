@@ -1,10 +1,9 @@
 import json
 import logging
 import joblib
-import numpy as np
 import pandas as pd
 
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from src.api.auth import router as auth_router, authenticate
 from src.api.log_module import router as log_router
