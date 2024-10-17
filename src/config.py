@@ -9,3 +9,6 @@ PROCESSED_DATA_DIR = os.path.join(BASE_DIR, 'data', 'processed')  # data/process
 
 # Chemin du fichier final exporté
 OUTPUT_FILE_PATH = os.path.join(PROCESSED_DATA_DIR, 'df_final.csv')
+
+# Répertoire des modèles
+MODEL_DIR = os.path.join(BASE_DIR,'models')
