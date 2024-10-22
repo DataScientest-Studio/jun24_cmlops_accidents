@@ -91,4 +91,3 @@ def save_final_dataset(df, output_path):
     :param output_path: Chemin du fichier de sortie
     """
     df.to_csv(output_path, index=False)
-    print(f"Le fichier final a été sauvegardé à {output_path}")

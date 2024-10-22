@@ -49,14 +49,14 @@ def transform_data(df):
                     'num_veh', 'id_vehicule_y', 'id_vehicule_x', 'id_usager',
                     'adr', 'com', 'dep', 'voie', 'nbv', 'actp', 
                     'etatp', 'locp', 'obs', 'senc', 'trajet', 'vosp']
-    df.drop(columns=cols_to_drop, inplace=True)
+    df = df.drop(columns=cols_to_drop)
 
     df = map_categories(df)
 
     # Remplacer les valeurs manquantes par le mode le plus fréquent
     for column in ['manv', 'obsm', 'place', 'int', 'situ', 'choc', 'atm', 'catr', 'surf']:
         mode_value = df[column].mode()[0]
-        df[column].fillna(mode_value, inplace=True)
+        df[column] = df[column].fillna(mode_value)
 
     # Supprimer les doublons et réinitialiser l'index
     df = df.drop_duplicates().reset_index(drop=True)
@@ -277,8 +277,8 @@ def build_model_features(df):
 
     # 7. Nettoyage des colonnes inutiles
     # Suppression des variables "temps" et autres colonnes utilisées temporairement
-    df.drop(columns=['an', 'an_nais', 'jour', 'mois', 'hrmn', 'age_usag', 
-                     'datetime_str', 'datetime', 'age_category', 'jour_sem'], inplace=True)
+    df = df.drop(columns=['an', 'an_nais', 'jour', 'mois', 'hrmn', 'age_usag', 
+                     'datetime_str', 'datetime', 'age_category', 'jour_sem'])
 
     # 8. Assurez-vous que toutes les colonnes 'object' sont converties en 'int'
     for col in df.columns:
