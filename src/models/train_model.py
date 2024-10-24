@@ -23,6 +23,10 @@ def train_model(X_train, y_train):
     # Définir le scorer personnalisé pour le rappel macro sur la classe 2
     scorer = make_scorer(recall_score, average='macro', labels=[2])
 
+    # Appliquer le sous-échantillonnage
+    undersampler = RandomUnderSampler(random_state=42)
+    X_resampled, y_resampled = undersampler.fit_resample(X_train, y_train)
+
     # Définir les hyperparamètres du SGDClassifier
     param_grid_sgd = {
         'classifier__alpha': [0.0001, 0.001, 0.01],
@@ -34,9 +38,8 @@ def train_model(X_train, y_train):
     # Initialiser le classificateur SGDClassifier
     sgd = SGDClassifier(random_state=42)
 
-    # Créer le pipeline avec undersampling, normalisation et classificateur
+    # Créer le pipeline avec normalisation et classificateur
     pipeline = Pipeline([
-        ('undersampler', RandomUnderSampler(random_state=42)),
         ('scaler', StandardScaler()),
         ('classifier', sgd)
     ])
@@ -45,7 +48,7 @@ def train_model(X_train, y_train):
     grid_search = GridSearchCV(estimator=pipeline, param_grid=param_grid_sgd, cv=5, scoring=scorer, n_jobs=4)
 
     # Exécuter la recherche sur la grille sur les données d'entraînement
-    grid_search.fit(X_train, y_train)
+    grid_search.fit(X_resampled, y_resampled)
 
     # Obtenir le meilleur modèle
     best_model = grid_search.best_estimator_
