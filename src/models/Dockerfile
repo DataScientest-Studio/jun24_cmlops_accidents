@@ -9,7 +9,12 @@ COPY src/models/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Étape 4 : Copier tout le contenu du dossier src
-COPY src /app/
+COPY src/models /app/models/
+COPY src/models/build_features.py /app/
+COPY src/models/config.py /app/
+COPY src/models/model_pipeline.py /app/
+COPY src/models/predict_model.py /app/
+COPY src/models/train_model.py /app/
 
 # Étape 5 : Spécifier la commande de démarrage
 CMD ["python", "models/train_model.py"]

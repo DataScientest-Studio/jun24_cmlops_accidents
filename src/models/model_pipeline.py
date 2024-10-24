@@ -1,6 +1,6 @@
 import pandas as pd
 
-from features.build_features import select_variables_and_one_hot, save_test_train
+from build_features import select_variables_and_one_hot, save_test_train
 from models.train_model import load_data, train_model, save_model
 from models.predict_model import evaluate_model
 from config import PROCESSED_DATA_DIR
