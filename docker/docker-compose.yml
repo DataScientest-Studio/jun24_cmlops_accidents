@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  registry:
+    image: registry:2
+    ports:
+      - "5000:5000"  # Expose le registre sur le port 5000
+
+  api:
+    build:
+      context: ../  # Le contexte est tout le répertoire "models"
+      dockerfile: docker/Dockerfile 
+    image: localhost:5000/api:latest  # Image nommée et taggée pour le registre local
+    ports:
+      - "8000:8000"  # Expose l'API sur le port 8000
+    depends_on:
+      - registry
+    environment:
+      - PYTHONUNBUFFERED=1  # Variable d'environnement pour ne pas buffer les logs Python, affiche logs en console en temps réel
+
