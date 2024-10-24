@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: models-service
+spec:
+  selector:
+    app: models-app
+  ports:
+    - protocol: TCP
+      port: 80  # Le port auquel le service est exposé
+      targetPort: 5000  # Le port exposé dans le conteneur (défini dans le deployment)
+  type: LoadBalancer  # Pour rendre le service accessible depuis l'extérieur (ou NodePort pour un test local)

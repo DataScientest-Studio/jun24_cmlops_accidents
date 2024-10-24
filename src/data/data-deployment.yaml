@@ -1,0 +1,25 @@
+apiVersion: apps/v1  # API de Kubernetes
+kind: Deployment  # Le type de ressource Kubernetes (Deployment)
+metadata:
+  name: data-deployment  # Le nom de ton déploiement
+  labels:
+    app: data-app  # Un label pour identifier ton application
+spec:
+  replicas: 1  # Nombre de répliques, ajustable selon les besoins
+  selector:
+    matchLabels:
+      app: data-app
+  template:
+    metadata:
+      labels:
+        app: data-app
+    spec:
+      containers:
+      - name: data-container  # Le nom du conteneur
+        image: docker.io/library/data_pipeline_container:latest  # L'image Docker pour le conteneur /data
+        ports:
+        - containerPort: 8000  # Si le conteneur expose un port (ex : API ou service interne)
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

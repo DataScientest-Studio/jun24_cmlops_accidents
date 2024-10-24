@@ -1,7 +1,8 @@
-Project Name
+MLOps project - Car accident
 ==============================
 
-This project is a starting Pack for MLOps projects based on the subject "movie_recommandation". It's not perfect so feel free to make some modifications on it.
+This project is realized during the formation "MLOps" at Datascientest. It aims to develop and test a machine learning model and create an API to access the model and make real time predictions.
+The raw data is loaded in data/raw (added to gitignore because of the total size) before being processed.
 
 Project Organization
 ------------
