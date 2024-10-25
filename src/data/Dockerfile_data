@@ -1,5 +1,5 @@
 # Étape 1 : Choisir l'image de base
-FROM python:3.9-slim
+FROM python:3.13.0
 
 # Étape 2 : Définir le répertoire de travail
 WORKDIR /app
