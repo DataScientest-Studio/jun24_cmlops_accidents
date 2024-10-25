@@ -58,6 +58,6 @@ def train_model(X_train, y_train):
 
 def save_model(model):
     """Sauvegarde le modèle entraîné."""
-    model_path = os.path.join(MODEL_DIR, 'best_SGDClass')
+    model_path = os.path.join(MODEL_DIR, 'best_SGDClass.joblib')
     joblib.dump(model, model_path)
     print(f"Modèle sauvegardé à {model_path}")
