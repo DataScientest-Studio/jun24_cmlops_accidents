@@ -11,7 +11,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Étape 4 : Copier tout le contenu nécessaire de la partie "data"
 COPY src/data /app/data/
 COPY src/data/etl.py /app/
-COPY src/data/test_etl.py /app/
 COPY src/data/config.py /app/
 COPY src/data/build_features.py /app/
 
