@@ -47,18 +47,31 @@ jobs:
 
     - name: Dependency vulnerability check with safety
       run: |
-        safety check --full-report > safety_report.txt || true
+        safety scan --full-report > safety_report.txt || true
 
     - name: Upload Safety report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: safety-report
         path: safety_report.txt
         retention-days: 10
 
     - name: Upload Bandit report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: bandit_report
         path: bandit_report.txt
         retention-days: 10
+
+    - name: Check for vulnerabilities in Safety report
+      run: |
+        if grep -q 'Vulnerable' safety_report.txt; then
+          echo "::warning file=safety_report.txt::Vulnerabilities detected in dependencies. Check the Safety report for details."
+        fi
+
+    - name: Check for vulnerabilities in Bandit report
+      run: |
+        if grep -q 'Issue' bandit_report.txt; then
+          echo "::warning file=bandit_report.txt::Vulnerabilities detected in the code. Check the Bandit report for details."
+        fi
+      
