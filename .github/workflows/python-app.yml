@@ -65,7 +65,7 @@ jobs:
 
     - name: Check for vulnerabilities in Safety report
       run: |
-        if grep -q 'Vulnerable' safety_report.txt; then
+        if grep -q 'Vulnerability found' safety_report.txt; then
           echo "::warning file=safety_report.txt::Vulnerabilities detected in dependencies. Check the Safety report for details."
         fi
 
