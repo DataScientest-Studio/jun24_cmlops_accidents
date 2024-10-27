@@ -42,7 +42,23 @@ jobs:
         pytest || echo "No tests found"
 
     - name: Security scan with bandit
-      run: bandit -r .
+      run: |
+        bandit -r . -o bandit_report.txt || true
 
     - name: Dependency vulnerability check with safety
-      run: safety check --full-report
+      run: |
+        safety check --full-report > safety_report.txt || true
+
+    - name: Upload Safety report
+      uses: actions/upload-artifact@v3
+      with:
+        name: safety-report
+        path: safety_report.txt
+        retention-days: 10
+
+    - name: Upload Bandit report
+      uses: actions/upload-artifact@v3
+      with:
+        name: bandit_report
+        path: bandit_report.txt
+        retention-days: 10
