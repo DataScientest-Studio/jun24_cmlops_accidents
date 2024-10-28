@@ -1,0 +1,25 @@
+apiVersion: apps/v1  # API de Kubernetes pour les déploiements
+kind: Deployment  # Le type de ressource
+metadata:
+  name: api-deployment  # Le nom du déploiement de ton API
+  labels:
+    app: api-app  # Label pour identifier l'API
+spec:
+  replicas: 2  # Déployer deux répliques pour une haute disponibilité (ajustable selon les besoins)
+  selector:
+    matchLabels:
+      app: api-app  # Label pour correspondre aux pods
+  template:
+    metadata:
+      labels:
+        app: api-app  # Même label pour associer le service et le pod
+    spec:
+      containers:
+      - name: api-container  # Nom du conteneur
+        image: docker.io/library/fastapi_container:latest  # Image Docker pour l'API FastAPI
+        ports:
+        - containerPort: 8000  # Port exposé dans le conteneur FastAPI
+        resources:  # Limites en termes de ressources (CPU et mémoire)
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
