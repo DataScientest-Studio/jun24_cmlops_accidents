@@ -1,0 +1,19 @@
+# Étape 1 : Choisir l'image de base
+FROM python:3.9-slim
+
+# Étape 2 : Définir le répertoire de travail
+WORKDIR /app
+
+# Étape 3 : Copier les fichiers requirements.txt et installer les dépendances
+COPY src/data/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Étape 4 : Copier tout le contenu nécessaire de la partie "data"
+COPY src/data /app/data/
+COPY src/data/etl.py /app/
+COPY src/data/test_etl.py /app/
+COPY src/data/config.py /app/
+COPY src/data/build_features.py /app/
+
+# Étape 5 : Spécifier la commande de démarrage (par exemple, exécuter le ETL)
+CMD ["python", "etl.py"]
