@@ -10,7 +10,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("etl_pipeline.log"),  # Sauvegarde dans root, modifiable au besoin
+        logging.FileHandler("etl_pipeline.log", encoding="utf-8"),  # Sauvegarde dans root, modifiable au besoin
         logging.StreamHandler()  # Affichage dans la console
     ]
 )
