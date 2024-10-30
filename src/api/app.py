@@ -13,8 +13,8 @@ from pydantic import BaseModel
 
 # Tentative de chargement des modèles (gestion des erreurs si les fichiers manquent)
 try:
-    model = joblib.load("models/KNN_250.joblib")
-    encoder = joblib.load("models/encoder.joblib")
+    model = joblib.load("models/best_SGDClass.joblib")
+    encoder = joblib.load("models/SGD_encoder.joblib")
     logging.info("Model and encoder loaded successfully.")
 except Exception as e:
     model = None
@@ -29,24 +29,24 @@ class AccidentData(BaseModel):
     catu: int
     catv: int
     obsm: int
-    col: int
     place: int
     manv: int
     situ: int
     agg: int
     plan: int
-    secu_combined: int
     age_category_encoded: int
-    infra: int
     inter: int
     sexe: int
-    catr: int
     lum: int
+    hour_cat: int
+    catr: int
+    choc: int
+    
 
 
 def load_model_performance():
     try:
-        with open("models/KNN250_performance.json", "r") as f:
+        with open("models/performance.json", "r") as f:
             return json.load(f)
     except FileNotFoundError:
         logging.error("Performance file not found.")
@@ -76,24 +76,24 @@ def predict(data: AccidentData, credentials: HTTPBasicCredentials = Depends(secu
                     data.catu,
                     data.catv,
                     data.obsm,
-                    data.col,
                     data.place,
                     data.manv,
                     data.situ,
                     data.agg,
                     data.plan,
-                    data.secu_combined,
                     data.age_category_encoded,
-                    data.infra,
                     data.inter,
                     data.sexe,
-                    data.catr,
                     data.lum,
+                    data.hour_cat,
+                    data.catr,
+                    data.choc,
+
                 ]
             ], columns=[
-                'catu', 'catv', 'obsm', 'col', 'place', 'manv', 'situ', 'agg', 
-            'plan', 'secu_combined', 'age_category_encoded', 'infra', 'inter', 
-            'sexe', 'catr', 'lum'
+                'catu', 'catv', 'obsm', 'place', 'manv', 'situ', 'agg', 
+            'plan', 'age_category_encoded', 'inter', 'sexe',
+            'lum', 'hour_cat' 'catr', 'choc'
             ]
         )
 
