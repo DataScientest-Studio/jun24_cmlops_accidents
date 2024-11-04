@@ -1,0 +1,34 @@
+apiVersion: apps/v1  # La version de l'API Kubernetes
+kind: Deployment  # Le type de ressource Kubernetes (Deployment)
+metadata:
+  name: models-deployment  # Le nom du déploiement
+  labels:
+    app: models-app  # Un label qui permet d'identifier l'application
+spec:
+  replicas: 1  # Le nombre de répliques, ajustables selon les besoins
+  selector:
+    matchLabels:
+      app: models-app
+  template:
+    metadata:
+      labels:
+        app: models-app
+      spec:
+    containers:
+    - name: models-container # Nom du conteneur
+      image: docker.io/library/model_training_container:latest # L'image Docker pour le conteneur models
+      volumeMounts:
+      - name: shared-data-volume
+        mountPath: /app/data  # Chemin dans le conteneur pour accéder aux données partagées
+      - name: shared-data-volume
+        mountPath: /app/models  # Chemin pour sauvegarder les modèles
+    volumes:
+    - name: shared-data-volume
+      persistentVolumeClaim:
+        claimName: shared-data-volume-claim
+        ports:
+        - containerPort: 5000
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

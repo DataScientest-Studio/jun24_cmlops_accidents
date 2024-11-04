@@ -9,4 +9,4 @@ spec:
     - protocol: TCP
       port: 80  # Le port par lequel le service sera exposé
       targetPort: 8000  # Le port dans le conteneur (défini dans le deployment)
-  type: LoadBalancer  # LoadBalancer pour le cloud, NodePort pour les tests locaux
+  type: LoadBalancer  # LoadBalancer pour le cloud
