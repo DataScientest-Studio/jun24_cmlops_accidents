@@ -1,0 +1,32 @@
+apiVersion: apps/v1  # API de Kubernetes
+kind: Deployment  # Le type de ressource Kubernetes (Deployment)
+metadata:
+  name: data-deployment  # Le nom du déploiement
+  labels:
+    app: data-app  # Un label pour identifier l'application
+spec:
+  replicas: 1  # Nombre de répliques, ajustable selon les besoins
+  selector:
+    matchLabels:
+      app: data-app
+  template:
+    metadata:
+      labels:
+        app: data-app
+      spec:
+    containers:
+    - name: data-container # Nom du conteneur
+      image: docker.io/library/model_training_container:latest # L'image Docker pour le conteneur data
+      volumeMounts:
+      - name: shared-data-volume
+        mountPath: /app/data  # Chemin dans le conteneur pour sauvegarder les données
+    volumes:
+    - name: shared-data-volume
+      persistentVolumeClaim:
+        claimName: shared-data-volume-claim
+        ports:
+        - containerPort: 8000  # Si le conteneur expose un port (ex : API ou service interne)
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

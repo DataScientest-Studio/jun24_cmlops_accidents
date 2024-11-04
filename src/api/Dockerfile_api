@@ -14,5 +14,5 @@ COPY src/api /app
 # Étape 5 : Exposer le port de l'API
 EXPOSE 8000
 
-# Étape 6 : Spécifier la commande de démarrage (démarrer l'application FastAPI)
+# Étape 6 : Spécifier la commande de démarrage
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]

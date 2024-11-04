@@ -1,7 +1,7 @@
 apiVersion: apps/v1  # API de Kubernetes pour les déploiements
 kind: Deployment  # Le type de ressource
 metadata:
-  name: api-deployment  # Le nom du déploiement de ton API
+  name: api-deployment  # Le nom du déploiement de l'API
   labels:
     app: api-app  # Label pour identifier l'API
 spec:
@@ -13,10 +13,17 @@ spec:
     metadata:
       labels:
         app: api-app  # Même label pour associer le service et le pod
-    spec:
-      containers:
-      - name: api-container  # Nom du conteneur
-        image: docker.io/library/fastapi_container:latest  # Image Docker pour l'API FastAPI
+      spec:
+    containers:
+    - name: api-container # Nom du conteneur
+      image: docker.io/library/model_training_container:latest # L'image Docker pour le conteneur api
+      volumeMounts:
+      - name: shared-data-volume
+        mountPath: /app/models  # Chemin dans le conteneur pour accéder aux données partagées
+    volumes:
+    - name: shared-data-volume
+      persistentVolumeClaim:
+        claimName: shared-data-volume-claim
         ports:
         - containerPort: 8000  # Port exposé dans le conteneur FastAPI
         resources:  # Limites en termes de ressources (CPU et mémoire)

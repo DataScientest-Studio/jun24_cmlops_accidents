@@ -9,4 +9,4 @@ spec:
     - protocol: TCP
       port: 80  # Port d’accès pour le service
       targetPort: 8000  # Le port exposé par FastAPI dans le conteneur
-  type: LoadBalancer  # LoadBalancer pour le cloud, ou NodePort/ClusterIP pour d'autres configurations
+  type: LoadBalancer  # LoadBalancer pour le cloud

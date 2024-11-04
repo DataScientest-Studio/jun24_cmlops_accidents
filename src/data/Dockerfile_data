@@ -15,5 +15,5 @@ COPY src/data/test_etl.py /app/
 COPY src/data/config.py /app/
 COPY src/data/build_features.py /app/
 
-# Étape 5 : Spécifier la commande de démarrage (par exemple, exécuter le ETL)
+# Étape 5 : Spécifier la commande de démarrage
 CMD ["python", "etl.py"]
