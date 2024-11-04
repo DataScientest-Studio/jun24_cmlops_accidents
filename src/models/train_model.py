@@ -8,8 +8,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import make_scorer, recall_score, classification_report
 from imblearn.under_sampling import RandomUnderSampler
-from config import PROCESSED_DATA_DIR
-from config import MODEL_DIR
+from models.config import MODEL_DIR
 
 def load_data(file_path):
     """Charge les données à partir d'un fichier CSV."""

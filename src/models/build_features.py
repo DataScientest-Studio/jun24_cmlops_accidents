@@ -3,14 +3,13 @@ import numpy as np
 import os
 import joblib
 
-from config import PROCESSED_DATA_DIR
+from models.config import PROCESSED_DATA_DIR, MODEL_DIR
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.model_selection import train_test_split
-from config import MODEL_DIR
 
 def homogenize_hour_format(row):
     """Homogénéise le format de l'heure dans la colonne 'hrmn'."""

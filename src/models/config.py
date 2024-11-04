@@ -1,7 +1,7 @@
 import os
 
 # Chemin de la racine du projet
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Répertoires des données brutes et traitées
 RAW_DATA_DIR = os.path.join(BASE_DIR, 'data', 'raw')  # data/raw à la racine
