@@ -120,6 +120,7 @@ def get_model_performance(credentials: HTTPBasicCredentials = Depends(security))
     authenticate(credentials)
 
     model_performance_data = load_model_performance()
+    logging.info("Model performance accessed successfully.")
     return model_performance_data
 
 
