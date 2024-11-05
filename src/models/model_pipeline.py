@@ -1,10 +1,11 @@
 import pandas as pd
 import logging
+import json
 
 from build_features import select_variables_and_one_hot, save_test_train
 from train_model import load_data, train_model, save_model
 from predict_model import evaluate_model
-from config import PROCESSED_DATA_DIR
+from config import PROCESSED_DATA_DIR, MODEL_DIR
 import os
 
 # Configuration du logger
@@ -66,6 +67,17 @@ def model_pipeline():
             if recall_class_1 > 0.65 and recall_class_2 > 0.65:
                 logger.info("Le rappel pour les classes 1 et 2 est supérieur à 65%, sauvegarde du modèle...")
                 save_model(model)
+
+                # Enregistrement des performances du modèle
+                performance_data = {
+                    "recall class 1": recall_class_1,
+                    "recall class 2": recall_class_2
+                }
+                performance_output_path = os.path.join(MODEL_DIR, 'performance.json')
+                with open(performance_output_path, 'w') as json_file:
+                    json.dump(performance_data, json_file)
+                logger.info(f"Performances sauvegardées dans {performance_output_path}")
+
                 break  # Sortie de la boucle une fois le modèle sauvegardé
             else:
                 logger.warning(f"Rappel insuffisant à la tentative {attempts}, relance de l'entraînement...")
