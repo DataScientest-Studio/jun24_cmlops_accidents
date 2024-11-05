@@ -1,10 +1,10 @@
 import pandas as pd
 import logging
 
-from models.build_features import select_variables_and_one_hot, save_test_train
-from models.train_model import load_data, train_model, save_model
-from models.predict_model import evaluate_model
-from models.config import PROCESSED_DATA_DIR
+from build_features import select_variables_and_one_hot, save_test_train
+from train_model import load_data, train_model, save_model
+from predict_model import evaluate_model
+from config import PROCESSED_DATA_DIR
 import os
 
 # Configuration du logger
@@ -77,3 +77,6 @@ def model_pipeline():
         logger.error(f"Une erreur est survenue lors de l'exécution de la pipeline : {str(e)}")
 
     logger.info("Processus terminé.")
+
+if __name__ == "__main__":
+    model_pipeline()
