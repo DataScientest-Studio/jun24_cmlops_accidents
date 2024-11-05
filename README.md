@@ -42,22 +42,32 @@ Project Organization
     │   │   └── api-deployment.yaml
     │   │   └── service-api.yaml
     │   │
+    │   ├── dags            <- Airflow module
+    │   │   └── pipeline_dag.py.py
+    │   │
     │   ├── data           <- Scripts to download or generate data and create the Data Container
-    │   │   └── make_dataset.py
-    │   │   └── config.py
-    │   │   └── etl.py
+    │   │   ├── make_dataset.py
+    │   │   ├── build_features.py
+    │   │   ├── config.py
+    │   │   ├── etl.py
     │   │   └── Dockerfile_data
-    │   │   └── data-deployment.yaml
-    │   │   └── service-data.yaml
+    │   │
+    │   ├── k8s            <- Kubernetes files
+    │   │   ├── api-deployment.yaml
+    │   │   ├── data-deployment.yaml
+    │   │   ├── models-deployment.yaml
+    │   │   ├── persistent-volume-claim.yaml
+    │   │   ├── persistent-volume.yaml
+    │   │   ├── service-api.yaml
+    │   │   ├── service-data.yaml
+    │   │   └── service-models.yaml
     │   │
     │   ├── models         <- Scripts to train models and create the Model Container
     │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │   └── config.py
-    │   │   └── model_pipeline.py
+    │   │   ├── train_model.py
+    │   │   ├── config.py
+    │   │   ├── model_pipeline.py
     │   │   └── Dockerfile
-    │   │   └── models-deployment.yaml
-    │   │   └── service-models.yaml
 
 --------
 
