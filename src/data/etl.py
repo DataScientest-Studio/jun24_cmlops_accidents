@@ -1,6 +1,6 @@
 from data.make_dataset import save_final_dataset, merge_datasets
-from build_features import transform_data, build_model_features, select_variables_and_one_hot, save_test_train
-from config import PROCESSED_DATA_DIR
+from data.build_features import transform_data, build_model_features, select_variables_and_one_hot, save_test_train
+from data.config import PROCESSED_DATA_DIR
 
 import os
 import logging

@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 
-from config import PROCESSED_DATA_DIR
+from data.config import PROCESSED_DATA_DIR
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.impute import SimpleImputer
