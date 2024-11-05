@@ -1,6 +1,6 @@
 
 import pandas as pd
-from data.config import RAW_DATA_DIR
+from config import RAW_DATA_DIR
 import os
 
 def load_data_by_year(file_prefix, start_year, end_year, sep_default=',', sep_special=None):

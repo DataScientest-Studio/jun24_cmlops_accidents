@@ -1,6 +1,6 @@
-from data.make_dataset import save_final_dataset, merge_datasets
-from data.build_features import transform_data, build_model_features, select_variables_and_one_hot, save_test_train
-from data.config import PROCESSED_DATA_DIR
+from make_dataset import save_final_dataset, merge_datasets
+from build_features import transform_data, build_model_features, select_variables_and_one_hot, save_test_train
+from config import PROCESSED_DATA_DIR
 
 import os
 import logging
@@ -96,7 +96,7 @@ def run_etl():
 
     # Validation du DataFrame features_df
     df_with_features_expected_columns = [
-        "place", "catu", "grav", "sexe", "catv", "obsm", "choc", "manv", "lum", "agg", "int", "atm", "col", "catr", "circ", 
+        "place", "catu", "grav", "sexe", "catv", "obsm", "choc", "manv", "lum", "agg", "inter", "atm", "col", "catr", "circ", 
         "prof", "plan", "surf", "infra", "situ", "hour_cat", "age_category_encoded", "jour_sem_encoded"
     ]
     df_with_features_expected_count = len(df_with_features_expected_columns)
@@ -109,3 +109,6 @@ def run_etl():
     logger.info("Sauvegarde du DataFrame transformé...")
     save_final_dataset(features_df, features_output_path)
     logger.info(f"Le fichier transformé a été sauvegardé à {features_output_path}")
+
+if __name__ == "__main__":
+    run_etl()
