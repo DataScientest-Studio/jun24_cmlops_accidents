@@ -1,12 +1,13 @@
 import pandas as pd
 import numpy as np
 import os
+import joblib
 
-from config import PROCESSED_DATA_DIR
+from config import PROCESSED_DATA_DIR, MODEL_DIR
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.model_selection import train_test_split
 
@@ -23,6 +24,9 @@ def transform_data(df):
     """
     Transforme le DataFrame selon les règles définies.
     """
+
+    # Renommer la colonne "int" en "inter" car cela peut poser problème au niveau du code
+    df.rename(columns={'int': 'inter'}, inplace=True)
 
     # Définir un dictionnaire de mapping pour convertir les valeurs de 'an'
     mapping = {5: 2005, 6: 2006, 7: 2007, 8: 2008, 9: 2009, 10: 2010, 
@@ -54,7 +58,7 @@ def transform_data(df):
     df = map_categories(df)
 
     # Remplacer les valeurs manquantes par le mode le plus fréquent
-    for column in ['manv', 'obsm', 'place', 'int', 'situ', 'choc', 'atm', 'catr', 'surf']:
+    for column in ['manv', 'obsm', 'place', 'inter', 'situ', 'choc', 'atm', 'catr', 'surf']:
         mode_value = df[column].mode()[0]
         df[column] = df[column].fillna(mode_value)
 
@@ -124,8 +128,8 @@ def map_categories(df):
     }
     df['place'] = df['place'].map(place_mapping).fillna(np.nan)
 
-    # Variable 'int'
-    int_mapping = {
+    # Variable 'inter'
+    inter_mapping = {
         1: 1,
         2: 2,
         3: 2,
@@ -136,7 +140,7 @@ def map_categories(df):
         8: 2,
         9: 2,
     }
-    df['int'] = df['int'].map(int_mapping).fillna(np.nan)
+    df['inter'] = df['inter'].map(inter_mapping).fillna(np.nan)
 
     # Variable 'situ'
     situ_mapping = {
@@ -297,11 +301,21 @@ def select_variables_and_one_hot(df):
     y = df['grav']  # Cible
 
     # Liste des variables à conserver = 15 variables - Pourrait être automatisé avec un SelectKBest éventuellement
-    variables_a_garder = ['catu', 'catv', 'obsm', 'place', 'manv', 'situ', 'agg', 'plan', 'age_category_encoded', 'int', 'sexe', 'lum', 'hour_cat', 'catr', 'choc']
+    variables_a_garder = ['catu', 'catv', 'obsm', 'place', 'manv', 'situ', 'agg', 'plan', 'age_category_encoded', 'inter', 'sexe', 'lum', 'hour_cat', 'catr', 'choc']
     # Garder seulement les colonnes spécifiées
     df_15 = df.filter(variables_a_garder)
     df_15 = df_15.astype('object')
-    X = pd.get_dummies(df_15, drop_first = True)
+
+    # Utiliser un OneHotEncoder pour pouvoir le sauvegarder et le réutiliser dans l'API
+    encoder = OneHotEncoder(drop='first', sparse_output=False)
+    X_encoded = encoder.fit_transform(df_15)
+
+    # Sauvegarde de l'encoder pour une utilisation future
+    encoder_path = os.path.join(MODEL_DIR, 'SGD_encoder.joblib')
+    joblib.dump(encoder, encoder_path)
+
+    # On retransforme X en datafrmae panda
+    X = pd.DataFrame(X_encoded, columns=encoder.get_feature_names_out(df_15.columns))
 
     # Les classes sont déséquilibrées, ont réalise donc un undersampling
     # Appliquer l'undersampling sur X et y en spécifiant un random_state

@@ -93,7 +93,7 @@ def predict(data: AccidentData, credentials: HTTPBasicCredentials = Depends(secu
             ], columns=[
                 'catu', 'catv', 'obsm', 'place', 'manv', 'situ', 'agg', 
             'plan', 'age_category_encoded', 'inter', 'sexe',
-            'lum', 'hour_cat' 'catr', 'choc'
+            'lum', 'hour_cat', 'catr', 'choc'
             ]
         )
 
@@ -120,6 +120,7 @@ def get_model_performance(credentials: HTTPBasicCredentials = Depends(security))
     authenticate(credentials)
 
     model_performance_data = load_model_performance()
+    logging.info("Model performance accessed successfully.")
     return model_performance_data
 
 
