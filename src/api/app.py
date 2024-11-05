@@ -93,7 +93,7 @@ def predict(data: AccidentData, credentials: HTTPBasicCredentials = Depends(secu
             ], columns=[
                 'catu', 'catv', 'obsm', 'place', 'manv', 'situ', 'agg', 
             'plan', 'age_category_encoded', 'inter', 'sexe',
-            'lum', 'hour_cat' 'catr', 'choc'
+            'lum', 'hour_cat', 'catr', 'choc'
             ]
         )
 
