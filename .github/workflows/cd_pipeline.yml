@@ -1,0 +1,73 @@
+name: CD Pipeline
+# Cette pipeline est un exemple dans le cadre d'un déploiement sur un serveur AWS
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout du code source
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Configurer kubectl avec les informations d'accès
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+
+      # Appliquer les déploiements Kubernetes
+      - name: Deploy API
+        run: kubectl apply -f /src/k8s/api-deployment.yaml
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+        
+      - name: Deploy Data
+        run: kubectl apply -f /src/k8s/data-deployment.yaml
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+        
+      - name: Deploy Models
+        run: kubectl apply -f /src/k8s/models-deployment.yaml
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+        
+      - name: Apply Persistent Volume
+        run: kubectl apply -f /src/k8s/persistent-volume.yaml
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+
+      - name: Apply Persistent Volume Claim
+        run: kubectl apply -f /src/k8s/persistent-volume-claim.yaml
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+
+      - name: Expose Services
+        run: |
+          kubectl apply -f /src/k8s/service-api.yaml
+          kubectl apply -f /src/k8s/service-data.yaml
+          kubectl apply -f /src/k8s/service-models.yaml
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+
+      - name: Run Airflow Pipeline
+        run: |
+          kubectl exec deployment/data-deployment -- python /src/data/etl.py
+          kubectl exec deployment/models-deployment -- python /src/models/train_model.py
+          kubectl exec deployment/api-deployment -- python /src/api/predict.py
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      
+      - name: Notify on Slack (Failure)
+        if: failure()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: '{"text": "Deployment failed to Kubernetes"}'
+        env:
+          SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
